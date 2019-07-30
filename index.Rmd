@@ -6,10 +6,49 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
-## R Markdown
+```{r load package, include = FALSE}
+pkgs <- c("caret","ggplot2","dplyr")
+check <- sapply(pkgs,require,warn.conflicts = TRUE,character.only = TRUE)
+
+if(any(!check)){
+        pkgs.missing <- pkgs[!check]
+        install.packages(pkgs.missing)
+        check <- sapply(pkgs.missing,require,warn.conflicts = TRUE,character.only = TRUE)
+}
+```
+
+```{r download data, include = FALSE}
+if (!file.exists("data/pml-training.csv")) {
+        dir.create("data", showWarnings = F)
+        download.file(
+                "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv",
+                "data/pml-training.csv")
+}
+
+if (!file.exists("data/pml-testing.csv")) {
+        dir.create("data", showWarnings = F)
+        download.file(
+                "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv",
+                "data/pml-testing.csv")
+}
+```
+
+## Load Data into R
+
+```{r}
+train <- read.csv("./data/pml-training.csv")
+test <- read.csv("./data/pml-testing.csv")
+```
+```{r}
+summarize(train)
+```
+
+
+
+
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
