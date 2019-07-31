@@ -39,31 +39,41 @@ if (!file.exists("data/pml-testing.csv")) {
 ## Load Data into R
 
 ```{r}
-train <- read.csv("./data/pml-training.csv")
-test <- read.csv("./data/pml-testing.csv")
+set.seed(95130)
+pml_train <- read.csv("./data/pml-training.csv")
+pml_test <- read.csv("./data/pml-testing.csv")
+inTrain <- createDataPartition(y = pml_train$classe, p = 0.75, list = FALSE)
+training <- pml_train[inTrain,]
+testing <- pml_train[-inTrain,]
+
 ```
+
+
+## Feature Selection
+
+Upon initial examination of the data contained in the `pml-training.csv` file, the following observations are noted:
+
+1. The first column 'X' is the index of observations and should be removed from analysis.
+
 ```{r}
-summarize(train)
+str(pml_train[,1])
 ```
 
 
-
-
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+2. Columns 3-7 contain infomation on time stamps/time window when data were recorded
+```{r}
+str(pml_train[,3:7])
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+3. Near zero variance variables
+```{r}
+nzv <- nearZeroVar(pml_train)
+colnames(pml_train)[nzv]
 
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+  * Those near zero variance variables only contain data when `new_window` variable is `yes` and are null otherwise. They all seem to be "engineered" variables (var, std, amplitude, min, max, and etc.) from the direct input data by the sensors. Thus, I choose to remove them from the analysis.
+  
+4. 
+
